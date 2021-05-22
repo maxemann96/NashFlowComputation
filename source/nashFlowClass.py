@@ -40,8 +40,7 @@ class NashFlow:
         self.outputDirectory = outputDirectory
 
         # Template File from /source/templates
-        self.templateFile = os.path.join(os.getcwd(), 'source', 'templates',
-                                         'algorithm_' + str(templateFile + 1) + '.zpl')
+        self.templateFile = templateFile
         self.allInOne = (templateFile == 1)
         self.advancedAlgo = (templateFile == 2)  # If true, then advanced backtracking with preprocessing is performed
 

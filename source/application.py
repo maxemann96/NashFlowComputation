@@ -781,17 +781,18 @@ class Interface(QtWidgets.QMainWindow, mainWdw.Ui_MainWindow):
         if not nextIntervalOnly:
             numberString = str(self.numberOfIntervals) if float(self.numberOfIntervals) != -1 else "all"
             self.output("Starting computation of " + numberString + " flow intervals")
+            t_file = os.path.join(os.getcwd(), 'source', 'templates', 'algorithm_' + str(self.templateFile + 1) + '.zpl')
 
             if self.currentTF == 'general':
                 self.sttr('nashFlow', None,
                           NashFlow(self.gttr('network'), float(inflowRate), float(self.numberOfIntervals),
                                    self.outputDirectory,
-                                   self.templateFile, self.scipFile, self.cleanUpEnabled, timeout))
+                                   t_file, self.scipFile, self.cleanUpEnabled, timeout))
             elif self.currentTF == 'spillback':
                 self.sttr('nashFlow', None,
                           NashFlow_spillback(self.gttr('network'), float(inflowRate), float(self.numberOfIntervals),
                                              self.outputDirectory,
-                                             self.templateFile, self.scipFile, self.cleanUpEnabled,
+                                             t_file, self.scipFile, self.cleanUpEnabled,
                                              timeout))
         else:
             self.output("Starting computation of next flow interval")
