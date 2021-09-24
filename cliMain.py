@@ -8,7 +8,7 @@ if __name__ == '__main__':
     graph = nx.cytoscape_graph(data)
     nashFlow = NashFlow(
         graph,
-        2,
+        3,
         -1,
         "/Users/maximilian/TEST",
         "/Users/maximilian/Development/NashFlowComputation/source/templates/algorithm_1.zpl",

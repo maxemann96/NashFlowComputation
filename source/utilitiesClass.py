@@ -612,8 +612,6 @@ class Utilities:
 
         try:
             xy = numpy.asarray([pos[v] for v in nodelist])
-        except KeyError as e:
-            raise nx.NetworkXError('Node %s has no position.' % e)
         except ValueError:
             raise nx.NetworkXError('Bad value in node positions.')
 

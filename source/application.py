@@ -6,6 +6,7 @@
 # ===========================================================================
 
 import configparser
+import json
 import os
 import pickle
 import subprocess
@@ -561,7 +562,7 @@ class Interface(QtWidgets.QMainWindow, mainWdw.Ui_MainWindow):
         if not graphPath:
             dialog = QtWidgets.QFileDialog
             # noinspection PyCallByClass,PyCallByClass
-            fopen = dialog.getOpenFileName(self, "Select File", self.defaultLoadSaveDir, "network files (*.cg)")
+            fopen = dialog.getOpenFileName(self, "Select File", self.defaultLoadSaveDir, "json files (*.json)")
             fopen = fopen[0]
             if len(fopen) == 0:
                 return
@@ -570,8 +571,18 @@ class Interface(QtWidgets.QMainWindow, mainWdw.Ui_MainWindow):
             fopen = graphPath
 
         # Read file         
-        with open(fopen, 'rb') as f:
-            network = pickle.load(f)
+        with open(fopen, 'r') as f:
+            network = nx.cytoscape_graph(json.load(f))
+
+            network.graph['type'] = network.graph.get('type', 'general')
+            network.graph['inflowRate'] = network.graph.get('inflowRate', 1)
+
+            for v in network.nodes():
+                network.nodes[v]['position'] = network.nodes[v].get('position', [0, 0])
+                network.nodes[v]['label'] = network.nodes[v].get('label', network.nodes[v]['value'])
+
+            network.graph['lastID'] = network.number_of_nodes()
+
             self.sttr('network', network.graph['type'], network)
             self.tabWidget.setCurrentIndex(self.tfTypeList.index(network.graph['type']))
             self.gttr('tabWidget').setCurrentIndex(0)
@@ -585,7 +596,7 @@ class Interface(QtWidgets.QMainWindow, mainWdw.Ui_MainWindow):
     # noinspection PyCallByClass
     def save_graph(self, graphPath=None):
         """
-        Save graph instance to '.cg' file
+        Save graph instance to '.json' file
         :param graphPath: If given, then save graph at path graphPath. Else a dialog is opened
         :return: 
         """
@@ -593,7 +604,7 @@ class Interface(QtWidgets.QMainWindow, mainWdw.Ui_MainWindow):
 
         if not graphPath:
             dialog = QtWidgets.QFileDialog
-            fsave = dialog.getSaveFileName(self, "Select File", self.defaultLoadSaveDir, "network files (*.cg)")
+            fsave = dialog.getSaveFileName(self, "Select File", self.defaultLoadSaveDir, "json files (*.json)")
 
             fsave = fsave[0]
             if len(fsave) == 0:
@@ -602,17 +613,18 @@ class Interface(QtWidgets.QMainWindow, mainWdw.Ui_MainWindow):
         else:
             fsave = graphPath
 
-        if not fsave.endswith('cg'):
-            fsave += ".cg"
+        if not fsave.endswith('json'):
+            fsave += ".json"
 
         if not graphPath:
             self.defaultLoadSaveDir = os.path.dirname(fsave)
             self.save_config()
 
         self.output("Saving graph: " + str(fsave))
-        # Save network instance to file
-        with open(fsave, 'wb') as f:
-            pickle.dump(self.gttr('network'), f)
+        # Save graph instance to file
+        with open(fsave, 'w') as f:
+            cytoscape_data = nx.cytoscape_data(self.gttr('network'))
+            json.dump(cytoscape_data, f)
 
     # noinspection PyCallByClass
     def load_nashflow(self):

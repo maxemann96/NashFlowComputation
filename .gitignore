@@ -56,3 +56,5 @@ README
 /output/*
 .directory
 
+# Virtual env
+/venv/
