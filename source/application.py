@@ -1367,6 +1367,7 @@ class Interface(QtWidgets.QMainWindow, mainWdw.Ui_MainWindow):
         os.system('xdg-open documentation/thesis.pdf')
 
     def validate_input(self):
+        return 0
         """Checks whether network satisfies certain conditions, return respective error code if necessary"""
         network = self.gttr('network')
         if network.in_edges('s'):
