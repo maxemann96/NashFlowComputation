@@ -4,9 +4,14 @@ import networkx as nx
 import json
 import sys
 from source.nashFlowClass import NashFlow
+import shutil
 
 if __name__ == '__main__':
     tempDir = TemporaryDirectory()
+    scipPath = shutil.which('scip')
+
+    if scipPath is None:
+        raise Exception("Path to scip executable could not be determined")
 
     data = json.load(sys.stdin)
     graph = nx.cytoscape_graph(data)
@@ -16,7 +21,7 @@ if __name__ == '__main__':
         -1,
         tempDir.name,
         os.path.join(os.path.dirname(__file__), 'source', 'templates', 'algorithm_1.zpl'),
-        "/usr/bin/scip",
+        scipPath,
         True,
         0
     )
