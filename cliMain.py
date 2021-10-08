@@ -1,8 +1,12 @@
+import os
+from tempfile import TemporaryDirectory
+import networkx as nx
+import json
+import sys
+from source.nashFlowClass import NashFlow
+
 if __name__ == '__main__':
-    import networkx as nx
-    import json
-    import sys
-    from source.nashFlowClass import NashFlow
+    tempDir = TemporaryDirectory()
 
     data = json.load(sys.stdin)
     graph = nx.cytoscape_graph(data)
@@ -10,9 +14,9 @@ if __name__ == '__main__':
         graph,
         1,
         -1,
-        "/Users/maximilian/TEST",
-        "/Users/maximilian/Development/NashFlowComputation/source/templates/algorithm_1.zpl",
-        "/usr/local/bin/scip",
+        tempDir.name,
+        os.path.join(os.getcwd(), 'source', 'templates', 'algorithm_1.zpl'),
+        "/usr/bin/scip",
         True,
         0
     )
@@ -27,7 +31,3 @@ if __name__ == '__main__':
     }, flow_intervals))
 
     print(json.dumps(result))
-
-    # result.
-    # result = nx.cytoscape_data(nashFlow.network)
-    # print(json.dumps(result))*/
