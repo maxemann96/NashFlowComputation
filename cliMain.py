@@ -15,7 +15,7 @@ if __name__ == '__main__':
         1,
         -1,
         tempDir.name,
-        os.path.join(os.getcwd(), 'source', 'templates', 'algorithm_1.zpl'),
+        os.path.join(os.path.dirname(__file__), 'source', 'templates', 'algorithm_1.zpl'),
         "/usr/bin/scip",
         True,
         0
