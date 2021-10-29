@@ -15,9 +15,16 @@ if __name__ == '__main__':
 
     data = json.load(sys.stdin)
     graph = nx.cytoscape_graph(data)
+
+    if nx.is_directed(graph) is False:
+        raise Exception("Input graph needs to be directed")
+
+    if graph.graph["inflowRate"] <= 0:
+        raise Exception("Inflow rate must be positive")
+
     nashFlow = NashFlow(
         graph,
-        1,
+        graph.graph["inflowRate"],
         -1,
         tempDir.name,
         os.path.join(os.path.dirname(__file__), 'source', 'templates', 'algorithm_1.zpl'),
