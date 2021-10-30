@@ -39,7 +39,12 @@ if __name__ == '__main__':
     result = list(map(lambda x: {
         "start": x[0],
         "end": x[1],
-        "labels": x[2].NTFNodeLabelDict
+        "nodeLabels": x[2].NTFNodeLabelDict,
+        "edgeFlow": list(map(lambda y: {
+            "source": y[0],
+            "target": y[1],
+            "flow": x[2].NTFEdgeFlowDict[y]
+        }, x[2].NTFEdgeFlowDict))
     }, flow_intervals))
 
     print(json.dumps(result))
