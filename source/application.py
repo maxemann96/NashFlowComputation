@@ -29,10 +29,10 @@ from source.plotValuesCanvasClass import PlotValuesCanvas
 from source.utilitiesClass import Utilities
 import source.ui.mainWdw as mainWdw
 
-
 # =======================================================================================================================
 warnings.filterwarnings('ignore')  # Suppress GTK-Warnings
 QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_X11InitThreads)  # This is necessary if threads access the GUI
+
 
 class Interface(QtWidgets.QMainWindow, mainWdw.Ui_MainWindow):
     """Controls GUI"""
@@ -137,8 +137,8 @@ class Interface(QtWidgets.QMainWindow, mainWdw.Ui_MainWindow):
         self.actionLoad_graph.triggered.connect(self.load_graph)
         self.actionSave_graph.triggered.connect(self.save_graph)
         self.actionExit.triggered.connect(QtWidgets.QApplication.quit)
-        #self.actionLoad_Nashflow.triggered.connect(self.load_nashflow)
-        #self.actionSave_Nashflow.triggered.connect(self.save_nashflow)
+        # self.actionLoad_Nashflow.triggered.connect(self.load_nashflow)
+        # self.actionSave_Nashflow.triggered.connect(self.save_nashflow)
         self.actionOpen_ThinFlowComputation.triggered.connect(self.open_tfc)
         self.actionMove_graph_to_ThinFlowComputation.triggered.connect(self.move_to_tfc)
         self.actionChange_animation_time_range.triggered.connect(self.generate_animation_dialog)
@@ -206,7 +206,8 @@ class Interface(QtWidgets.QMainWindow, mainWdw.Ui_MainWindow):
             self.sttr('plotFrameLayout', tfType, QtWidgets.QVBoxLayout())
             self.gttr('plotFrame', tfType).setLayout(self.gttr('plotFrameLayout', tfType))
             self.sttr('graphCreationCanvas', tfType, PlotCanvas(self.gttr('network', tfType), self,
-                                                                stretchFactor=self.plotCanvasStretchFactor, onlyNTF=False,
+                                                                stretchFactor=self.plotCanvasStretchFactor,
+                                                                onlyNTF=False,
                                                                 type=tfType))  # Initialize PlotCanvas
             self.gttr('plotFrameLayout', tfType).addWidget(self.gttr('graphCreationCanvas', tfType))
 
@@ -483,7 +484,7 @@ class Interface(QtWidgets.QMainWindow, mainWdw.Ui_MainWindow):
         self.re_init_node_list()
         self.re_init_edge_list()
 
-        #self.gttr('graphCreationCanvas').correct_edge_label_transangle()
+        # self.gttr('graphCreationCanvas').correct_edge_label_transangle()
 
     def re_init_nashflow_app(self):
         """Clears the nashflow tab for new nashflow computation"""
@@ -793,7 +794,8 @@ class Interface(QtWidgets.QMainWindow, mainWdw.Ui_MainWindow):
         if not nextIntervalOnly:
             numberString = str(self.numberOfIntervals) if float(self.numberOfIntervals) != -1 else "all"
             self.output("Starting computation of " + numberString + " flow intervals")
-            t_file = os.path.join(os.getcwd(), 'source', 'templates', 'algorithm_' + str(self.templateFile + 1) + '.zpl')
+            t_file = os.path.join(os.getcwd(), 'source', 'templates',
+                                  'algorithm_' + str(self.templateFile + 1) + '.zpl')
 
             if self.currentTF == 'general':
                 self.sttr('nashFlow', None,
@@ -896,7 +898,11 @@ class Interface(QtWidgets.QMainWindow, mainWdw.Ui_MainWindow):
             loadLabel = "N/A"
         else:
             load = float(load)
-            loadStorageRatio = load/self.gttr('network')[v][w]['storage'] * 100
+
+            if 'storage' not in self.gttr('network')[v][w]:
+                self.gttr('network')[v][w]['storage'] = float('inf')
+
+            loadStorageRatio = load / self.gttr('network')[v][w]['storage'] * 100
             loadLabel = str(int(loadStorageRatio))
 
         self.gttr('currentQueueSizeLabel').setText(queueSizeLabel)
@@ -1419,5 +1425,3 @@ class Interface(QtWidgets.QMainWindow, mainWdw.Ui_MainWindow):
         }
 
         return errorDescription[errorCode]
-
-
