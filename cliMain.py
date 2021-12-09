@@ -25,7 +25,7 @@ if __name__ == '__main__':
     nashFlow = NashFlow(
         graph,
         graph.graph["inflowRate"],
-        -1,
+        15,
         tempDir.name,
         os.path.join(os.path.dirname(__file__), 'source', 'templates', 'algorithm_1.zpl'),
         scipPath,
