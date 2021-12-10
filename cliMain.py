@@ -16,6 +16,9 @@ if __name__ == '__main__':
     data = json.load(sys.stdin)
     graph = nx.cytoscape_graph(data)
 
+    if nx.is_multigraphical(graph) is True:
+        raise Exception("Input graph needs to be not a multigraph")
+
     if nx.is_directed(graph) is False:
         raise Exception("Input graph needs to be directed")
 
@@ -25,7 +28,7 @@ if __name__ == '__main__':
     nashFlow = NashFlow(
         graph,
         graph.graph["inflowRate"],
-        15,
+        graph.graph["maximumNumberOfIntervals"],
         tempDir.name,
         os.path.join(os.path.dirname(__file__), 'source', 'templates', 'algorithm_1.zpl'),
         scipPath,
