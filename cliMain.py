@@ -14,6 +14,25 @@ if __name__ == '__main__':
         raise Exception("Path to scip executable could not be determined")
 
     data = json.load(sys.stdin)
+
+    nodeList = [n for n in [node['data']['id'] for node in data['elements']['nodes']] if n != 's' and n != 't']
+    nodeMap = {el: str(idx) for idx, el in enumerate(nodeList)}
+
+    nodeMap['s'] = 's'
+    nodeMap['t'] = 't'
+
+    for node in data['elements']['nodes']:
+        node['data']['id'] = nodeMap[node['data']['id']]
+        node['data']['name'] = node['data']['id']
+        node['data']['value'] = node['data']['id']
+        node['data']['label'] = node['data']['id']
+
+    for edge in data['elements']['edges']:
+        edge['data']['source'] = nodeMap[edge['data']['source']]
+        edge['data']['target'] = nodeMap[edge['data']['target']]
+
+    # print(json.dumps(data), file=sys.stderr)
+
     graph = nx.cytoscape_graph(data)
 
     if nx.is_multigraphical(graph) is True:
@@ -39,13 +58,15 @@ if __name__ == '__main__':
     nashFlow.run()
     flow_intervals = nashFlow.flowIntervals
 
+    nodeReverseMap = {v: k for k, v in nodeMap.items()}
+
     result = list(map(lambda x: {
         "start": x[0],
         "end": x[1],
-        "nodeLabels": x[2].NTFNodeLabelDict,
+        "nodeLabels": {nodeReverseMap[k]: v for k, v in x[2].NTFNodeLabelDict.items()},
         "edgeFlow": list(map(lambda y: {
-            "source": y[0],
-            "target": y[1],
+            "source": nodeReverseMap[y[0]],
+            "target": nodeReverseMap[y[1]],
             "flow": x[2].NTFEdgeFlowDict[y]
         }, x[2].NTFEdgeFlowDict))
     }, flow_intervals))
