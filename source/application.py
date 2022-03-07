@@ -19,6 +19,7 @@ from tempfile import gettempdir
 import networkx as nx
 from PyQt5 import QtGui, QtCore, QtWidgets
 
+from source.GraphIdTransformer import transform
 from source.nashFlowClass import NashFlow
 from source.nashFlowClass_spillback import NashFlow_spillback
 from source.plotAnimationCanvasClass import PlotAnimationCanvas
@@ -573,7 +574,7 @@ class Interface(QtWidgets.QMainWindow, mainWdw.Ui_MainWindow):
 
         # Read file         
         with open(fopen, 'r') as f:
-            network = nx.cytoscape_graph(json.load(f))
+            network = nx.cytoscape_graph(transform(json.load(f))[0])
 
             network.graph['type'] = network.graph.get('type', 'general')
             network.graph['inflowRate'] = network.graph.get('inflowRate', 1)

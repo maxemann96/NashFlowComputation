@@ -5,6 +5,7 @@ import json
 import sys
 from source.nashFlowClass import NashFlow
 import shutil
+from source.GraphIdTransformer import transform
 
 if __name__ == '__main__':
     tempDir = TemporaryDirectory()
@@ -13,25 +14,7 @@ if __name__ == '__main__':
     if scipPath is None:
         raise Exception("Path to scip executable could not be determined")
 
-    data = json.load(sys.stdin)
-
-    nodeList = [n for n in [node['data']['id'] for node in data['elements']['nodes']] if n != 's' and n != 't']
-    nodeMap = {el: str(idx) for idx, el in enumerate(nodeList)}
-
-    nodeMap['s'] = 's'
-    nodeMap['t'] = 't'
-
-    for node in data['elements']['nodes']:
-        node['data']['id'] = nodeMap[node['data']['id']]
-        node['data']['name'] = node['data']['id']
-        node['data']['value'] = node['data']['id']
-        node['data']['label'] = node['data']['id']
-
-    for edge in data['elements']['edges']:
-        edge['data']['source'] = nodeMap[edge['data']['source']]
-        edge['data']['target'] = nodeMap[edge['data']['target']]
-
-    # print(json.dumps(data), file=sys.stderr)
+    (data, nodeMap) = transform(json.load(sys.stdin))
 
     graph = nx.cytoscape_graph(data)
 
